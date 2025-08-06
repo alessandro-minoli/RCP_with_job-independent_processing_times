@@ -11,10 +11,10 @@
 
 extern int J;
 extern int M;
-extern std::vector<int> G_p;              
+extern std::vector<int> G_p;
 extern std::vector<std::vector<int>> G_t;
 extern std::vector<std::vector<int>> G_lambda_factors;
-extern std::vector<int> G_mu_factors;  
+extern std::vector<int> G_mu_factors;
 
 inline int BITSET_LIMIT = 1;
 

@@ -8,15 +8,15 @@
 #include <iostream>
 #include <vector>
 
-using std::vector;
 using std::tuple;
+using std::vector;
 
 int J;
 int M;
-vector<int> G_p;              
+vector<int> G_p;
 vector<vector<int>> G_t;
 vector<vector<int>> G_lambda_factors;
-vector<int> G_mu_factors;    
+vector<int> G_mu_factors;
 
 tuple<int, double, int, int> Solver::run_exact(Instance &ins, bool verbose)
 {
@@ -48,7 +48,7 @@ tuple<int, double, int, int> Solver::run_exact(Instance &ins, bool verbose)
 
     std::unordered_map<State *, State *> pred;
     pred.emplace(initial, nullptr);
-    
+
     Pool pool(ins.U);
     pool.try_push(initial);
 
@@ -57,9 +57,8 @@ tuple<int, double, int, int> Solver::run_exact(Instance &ins, bool verbose)
 
         State *s = pool.pop();
 
-        /* the first final state we reach is the optimal solution,
-         * because states with lower t are popped from the pool first
-         */
+        // the first final state we reach is the optimal solution,
+        // because states with lower t are popped from the pool first
         if (s->is_final())
         {
             assert(s->t <= best_obj_val);
@@ -94,7 +93,7 @@ tuple<int, double, int, int> Solver::run_exact(Instance &ins, bool verbose)
                     s_next->C[m] = s_next->t;
                 }
 
-                if (m+1 < M+1)
+                if (m + 1 < M + 1)
                 {
                     s_next->x[m + 1] = j;
                     s_next->C[m + 1] = s_next->t + G_p[m + 1];
@@ -121,10 +120,12 @@ tuple<int, double, int, int> Solver::run_exact(Instance &ins, bool verbose)
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsed = end - start;
 
-    assert (best_state != nullptr);
+    assert(best_state != nullptr);
     if (verbose)
     {
+        std::cout << std::endl;
         print_optimal_solution(best_state, pred);
+        std::cout << std::endl;
     }
 
     int extended_states_cnt = pred.size();
@@ -135,12 +136,11 @@ tuple<int, double, int, int> Solver::run_exact(Instance &ins, bool verbose)
         delete key.first;
     }
     pred.clear();
-    
+
     int z_optimal = best_obj_val;
     double execution_time = elapsed.count();
     return std::make_tuple(z_optimal, execution_time, extended_states_cnt, used_IDs_cnt);
 }
-
 
 tuple<int, double> Solver::run_heuristic(Instance &ins, int rho, bool verbose)
 {
@@ -157,11 +157,10 @@ tuple<int, double> Solver::run_heuristic(Instance &ins, int rho, bool verbose)
     State *best_state = nullptr;
 
     vector<tuple<int, int>> heuristic_extension_candidates;
-    auto cmp_function = [](const std::tuple<int, int>& a, const std::tuple<int, int>& b) {
+    auto cmp_function = [](const std::tuple<int, int> &a, const std::tuple<int, int> &b)
+    {
         return std::get<1>(a) < std::get<1>(b);
     };
-
-    // creating the initial state
 
     State *initial = new State();
 
@@ -177,7 +176,7 @@ tuple<int, double> Solver::run_heuristic(Instance &ins, int rho, bool verbose)
 
     std::unordered_map<State *, State *> pred;
     pred.emplace(initial, nullptr);
-    
+
     Pool pool(ins.U);
     pool.try_push(initial);
 
@@ -186,9 +185,6 @@ tuple<int, double> Solver::run_heuristic(Instance &ins, int rho, bool verbose)
 
         State *s = pool.pop();
 
-        /* the first final state we reach is the optimal solution,
-         * because states with lower t are popped from the pool first
-         */
         if (s->is_final())
         {
             assert(s->t <= best_obj_val);
@@ -204,25 +200,25 @@ tuple<int, double> Solver::run_heuristic(Instance &ins, int rho, bool verbose)
             if (s->machine_is_non_idle_and_non_blocked(m))
             {
                 assert(s->C[m] != INF);
-                //int next_t = std::max(s->t + G_t[s->y][m], s->C[m]);
-                // int next_t = std::max(s->t + G_t[s->y][m], s->e[m]);
                 heuristic_extension_candidates.emplace_back(m, s->e[m]);
             }
         }
 
-        if (rho >= heuristic_extension_candidates.size()) {
+        if (rho >= heuristic_extension_candidates.size())
+        {
             std::sort(
-                heuristic_extension_candidates.begin(), 
-                heuristic_extension_candidates.end(),
-                cmp_function);
-        } else {
-            std::partial_sort(
-                heuristic_extension_candidates.begin(), 
-                heuristic_extension_candidates.begin() + rho, 
+                heuristic_extension_candidates.begin(),
                 heuristic_extension_candidates.end(),
                 cmp_function);
         }
-
+        else
+        {
+            std::partial_sort(
+                heuristic_extension_candidates.begin(),
+                heuristic_extension_candidates.begin() + rho,
+                heuristic_extension_candidates.end(),
+                cmp_function);
+        }
 
         for (int i = 0; i != std::min(rho, static_cast<int>(heuristic_extension_candidates.size())); ++i)
         {
@@ -236,7 +232,7 @@ tuple<int, double> Solver::run_heuristic(Instance &ins, int rho, bool verbose)
             s_next->t = std::max(s->t + G_t[s->y][m], s->C[m]) + G_t[m][m + 1];
 
             // can only be true in heuristic case
-            if (s_next->t > best_obj_val) 
+            if (s_next->t > best_obj_val)
             {
                 delete s_next;
                 continue;
@@ -256,7 +252,7 @@ tuple<int, double> Solver::run_heuristic(Instance &ins, int rho, bool verbose)
                 s_next->C[m] = s_next->t;
             }
 
-            if (m+1 < M+1)
+            if (m + 1 < M + 1)
             {
                 s_next->x[m + 1] = j;
                 s_next->C[m + 1] = s_next->t + G_p[m + 1];
@@ -286,11 +282,15 @@ tuple<int, double> Solver::run_heuristic(Instance &ins, int rho, bool verbose)
     {
         if (best_state != nullptr)
         {
+            std::cout << std::endl;
             print_optimal_solution(best_state, pred);
+            std::cout << std::endl;
         }
         else
         {
-            std::cout << "trivial solution is the optimal one" << std::endl;
+            std::cout << std::endl
+                      << "trivial solution is the optimal one" << std::endl
+                      << std::endl;
         }
     }
 
@@ -299,16 +299,15 @@ tuple<int, double> Solver::run_heuristic(Instance &ins, int rho, bool verbose)
         delete key.first;
     }
     pred.clear();
-    
+
     int z_optimal = best_obj_val;
     double execution_time = elapsed.count();
     return std::make_tuple(z_optimal, execution_time);
 }
 
-
-void Solver::print_optimal_solution(State* s, std::unordered_map<State *, State *> pred)
+void Solver::print_optimal_solution(State *s, std::unordered_map<State *, State *> pred)
 {
     if (pred[s] != nullptr)
         print_optimal_solution(pred[s], pred);
-    s->display(std::cout);
+    std::cout << *s;
 }

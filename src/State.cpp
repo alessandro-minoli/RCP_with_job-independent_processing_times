@@ -2,42 +2,24 @@
 
 #include <assert.h>
 
-using std::vector;
-
-void State::set_e()
+std::ostream &operator<<(std::ostream &os, const State &s)
 {
-    for (int m = M; m != -1; --m)
-    {
-        if (machine_is_blocked(m))
-        {
-            e[m] = std::max(C[m], e[m + 1] + G_t[m + 1][m + 2] + G_t[m + 2][m]);
-        }
-        else
-        {
-            e[m] = std::max(C[m], t + G_t[y][m]);
-        }
-    }
-}
+    os << "t " << s.t << " y " << s.y;
+    // os << " idx_in_time_slot " << s.idx_in_time_slot << std::endl;
 
-std::ostream &State::display(std::ostream &os) const
-{
-    os << "t " << t
-       << " y " << y
-       << " idx_in_time_slot " << idx_in_time_slot << std::endl;
-
-    os << "x ";
-    for (const auto &el : x)
+    os << " x ";
+    for (const auto &el : s.x)
         os << el << " ";
-    os << std::endl;
 
-    os << "C ";
-    for (const auto &el : C)
+    os << " C ";
+    for (const auto &el : s.C)
         if (el == INF)
             os << "inf ";
         else
             os << el << " ";
     os << std::endl;
 
+    /*
     os << "n ";
     for (const auto &el : n)
         os << el << " ";
@@ -50,30 +32,17 @@ std::ostream &State::display(std::ostream &os) const
         else
             os << el << " ";
     os << std::endl;
-
-    for (int i = 0; i != 80; ++i)
-    {
-        os << "-";
-    }
-    os << std::endl;
+    */
 
     return os;
 }
 
 bool State::dominates(const State *other) const
 {
-    
+
     // we are assuming this has been generated before than other
     if (t == other->t && y == other->y && x == other->x && C == other->C)
         return true;
-
-    // for (int m = 0; m != M + 1; ++m)
-    // {
-    //     if (n[m] < other->n[m])
-    //     {
-    //         return false;
-    //     }
-    // }
 
     for (int m = 0; m != M + 1; ++m)
     {
@@ -87,6 +56,6 @@ bool State::dominates(const State *other) const
             }
         }
     }
-    
+
     return true;
 }

@@ -2,20 +2,14 @@
 
 #include <fstream>
 
-using std::cin;
-using std::cout;
-using std::endl;
-using std::string;
-using std::vector;
-
-Instance::Instance(const string &filename)
+Instance::Instance(const std::string &filename)
 {
     std::ifstream in(filename);
     if (!in)
     {
-        std::cerr << "ERROR, " << __FILE__ << " : in function " << __func__ << " at line " << __LINE__ << endl
-                  << "       Compiled on " << __DATE__ << " at " << __TIME__ << endl
-                  << "       File " << filename << " does not exists" << endl;
+        std::cerr << "ERROR, " << __FILE__ << " : in function " << __func__ << " at line " << __LINE__ << std::endl
+                  << "       Compiled on " << __DATE__ << " at " << __TIME__ << std::endl
+                  << "       File " << filename << " does not exists" << std::endl;
         exit(EXIT_FAILURE);
     }
 
@@ -32,7 +26,7 @@ Instance::Instance(const string &filename)
 
     for (int i = 0; i != M + 2; ++i)
     {
-        vector<int> t_i;
+        std::vector<int> t_i;
         int x;
         for (int j = 0; j != M + 2; ++j)
         {
@@ -55,26 +49,26 @@ Instance::Instance(const string &filename)
     }
     tot_processing_time *= J;
 
-    int tot_forMard_travel_time = 0;
+    int tot_forward_travel_time = 0;
     for (int i = 0; i != M + 1; ++i)
     {
-        tot_forMard_travel_time += t[i][i + 1];
+        tot_forward_travel_time += t[i][i + 1];
     }
-    tot_forMard_travel_time *= J;
+    tot_forward_travel_time *= J;
 
-    int tot_backMard_travel_time = t[M + 1][0] * (J - 1);
+    int tot_backward_travel_time = t[M + 1][0] * (J - 1);
 
-    U = tot_processing_time + tot_forMard_travel_time + tot_backMard_travel_time;
+    U = tot_processing_time + tot_forward_travel_time + tot_backward_travel_time;
 
     // initializing lambda_factors
 
     for (int i = 0; i != M + 2; ++i)
     {
-        vector<int> lambda_factors_i(M+2, -1);
+        std::vector<int> lambda_factors_i(M + 2, -1);
         lambda_factors_i[i] = 0;
-        for (int j = i+1; j != M + 2; ++j)
+        for (int j = i + 1; j != M + 2; ++j)
         {
-            lambda_factors_i[j] = lambda_factors_i[j-1] + t[j-1][j] + p[j];
+            lambda_factors_i[j] = lambda_factors_i[j - 1] + t[j - 1][j] + p[j];
         }
         lambda_factors.push_back(lambda_factors_i);
     }
@@ -88,70 +82,49 @@ Instance::Instance(const string &filename)
     }
 }
 
-std::ostream &Instance::display(std::ostream &os) const
+std::ostream &operator<<(std::ostream &os, const Instance &ins)
 {
-    os << "J = " << J << endl;
-    os << "M = " << M << endl;
-    os << "U = " << U << endl;
-    os << "max_number_of_extensions = " << max_number_of_extensions << endl;
-
+    os << "J = " << ins.J << std::endl;
+    os << "M = " << ins.M << std::endl;
     os << "p =\t";
-    for (auto const &el : p)
+    for (auto const &el : ins.p)
     {
         os << el << " ";
     }
-    os << endl;
+    os << std::endl;
 
-    os << "t =" << endl;
-    for (int i = 0; i != M + 2; ++i)
+    os << "t =" << std::endl;
+    for (int i = 0; i != ins.M + 2; ++i)
     {
         os << "\t";
-        for (int j = 0; j != M + 2; ++j)
+        for (int j = 0; j != ins.M + 2; ++j)
         {
-            os << t[i][j] << " ";
+            os << ins.t[i][j] << " ";
         }
-        os << endl;
+        os << std::endl;
     }
+    os << "U = " << ins.U << std::endl;
 
-    os << "lambda_factors =" << endl;
-    for (int i = 0; i != M + 2; ++i)
+    /*
+    os << "max_number_of_extensions = " << ins.max_number_of_extensions << std::endl;
+    os << "lambda_factors =" << std::endl;
+    for (int i = 0; i != ins.M + 2; ++i)
     {
         os << "\t";
-        for (int j = 0; j != M + 2; ++j)
+        for (int j = 0; j != ins.M + 2; ++j)
         {
-            os << lambda_factors[i][j] << " ";
+            os << ins.lambda_factors[i][j] << " ";
         }
-        os << endl;
+        os << std::endl;
     }
 
     os << "mu_factors =\t";
-    for (auto const &el : mu_factors)
+    for (auto const &el : ins.mu_factors)
     {
         os << el << " ";
     }
-    os << endl;
-
-    for (int i = 0; i != 80; ++i)
-    {
-        os << "-";
-    }
-    os << endl;
+    os << std::endl;
+    */
 
     return os;
 }
-
-// int Instance::get_optimal_solution(const std::string &filename)
-// {
-//     std::ifstream in(filename);
-//     if (!in)
-//     {
-//         std::cerr << "ERROR, " << __FILE__ << " : in function " << __func__ << " at line " << __LINE__ << endl
-//                   << "       Compiled on " << __DATE__ << " at " << __TIME__ << endl
-//                   << "       File " << filename << " does not exists" << endl;
-//         exit(EXIT_FAILURE);
-//     }
-//     int z;
-//     in >> z;
-//     in.close();
-//     return z;
-// }

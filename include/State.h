@@ -19,18 +19,10 @@ public:
         n = other.n;
     };
 
-    std::ostream &display(std::ostream &os) const;
-
-    void set_e();
-
     bool is_final() const
     {
-        return y == M + 1 && std::all_of(x.begin(), x.end(), [](int x_){ return x_ == 0; });
-        // return y == M + 1 &&
-        //        std::all_of(x.begin(), x.end(), [](int x_)
-        //                    { return x_ == 0; }) &&
-        //        std::all_of(C.begin(), C.end(), [](int x_)
-        //                    { return x_ == INF; });
+        return y == M + 1 && std::all_of(x.begin(), x.end(), [](int x_)
+                                         { return x_ == 0; });
     };
 
     bool machine_is_blocked(int m) const
@@ -45,10 +37,25 @@ public:
         return C[m] != INF && !machine_is_blocked(m);
     };
 
+    void set_e()
+    {
+        for (int m = M; m != -1; --m)
+        {
+            if (machine_is_blocked(m))
+            {
+                e[m] = std::max(C[m], e[m + 1] + G_t[m + 1][m + 2] + G_t[m + 2][m]);
+            }
+            else
+            {
+                e[m] = std::max(C[m], t + G_t[y][m]);
+            }
+        }
+    }
+
     int get_lambda(int k, int j) const
     {
-        assert (j >= 1 && j <= J);
-        // m is the machine on which job j is
+        assert(j >= 1 && j <= J);
+        // m is the machine that contains job j
         int m = 0;
         if (x[0] > j)
         {
@@ -64,10 +71,6 @@ public:
         }
         assert(k >= m);
         int lambda = e[m] + G_lambda_factors[m][k];
-        // for (int h = m + 1; h <= k; ++h)
-        // {
-        //     lambda += G_t[h - 1][h] + G_p[h];
-        // }
         return lambda;
     };
 
@@ -81,8 +84,6 @@ public:
     };
 
     bool dominates(const State *other) const;
-                   
-    // tenere aggiornato il copy constructor in base ai campi
 
     int t;
     int y;
@@ -101,5 +102,7 @@ public:
     int idx_in_time_slot;
     int id;
 };
+
+std::ostream &operator<<(std::ostream &os, const State &s);
 
 #endif

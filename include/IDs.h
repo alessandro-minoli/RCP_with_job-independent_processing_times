@@ -12,7 +12,7 @@ class IDs
 {
 public:
     IDs() : next_free_id(0), id_to_state(POOL_SIZE, nullptr) {};
-    
+
     void assign_id(State *s)
     {
         assert(s->id == -1);
@@ -30,12 +30,12 @@ public:
                           << "       POOL_SIZE must be increased" << std::endl;
                 exit(EXIT_FAILURE);
             }
-            
+
             s->id = next_free_id;
 
             BITSET_LIMIT = ceil(s->id / 64) + 1;
             assert(BITSET_LIMIT <= BITSET_NUMBER_OF_WINDOWS);
-            
+
             ++next_free_id;
         }
         id_to_state[s->id] = s;
@@ -46,7 +46,7 @@ public:
         assert(s->id != -1);
         released_ids.push_back(s->id);
         id_to_state[s->id] = nullptr;
-        s->id = -1; // non so se necessario
+        s->id = -1;
     }
 
     State *get_state_from_id(int id)
