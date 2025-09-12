@@ -1,10 +1,10 @@
 #!/bin/bash
 
-mkdir -p dataset_out
+mkdir -p dataset_10_out
 
-for infile in dataset/*.txt; do
+for infile in dataset_10/*.txt; do
     filename=$(basename "$infile")
-    outfile="dataset_out/$filename"
+    outfile="dataset_10_out/$filename"
     echo "... processing '$infile'"
-    ./bin/RCP_with_job-independent_processing_times "$infile" > "$outfile"
+    ./bin/RCP_with_fixed_job_sequence "$infile" > "$outfile"
 done

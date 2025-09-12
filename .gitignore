@@ -43,3 +43,6 @@
 build/
 bin/
 other/
+.vscode/
+compile.sh
+dataset_*/
