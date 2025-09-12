@@ -4,7 +4,7 @@ Alessandro Minoli, Giovanni Righini (2025)
 
 ##### Usage
 
-Compile and run on a specific instance with :
+Compile with :
 
 ```
 mkdir build
