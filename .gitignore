@@ -40,9 +40,10 @@
 # debug information files
 *.dwo
 
+
+.vscode/
 build/
 bin/
 other/
-.vscode/
+papers/
 compile.sh
-dataset_*/

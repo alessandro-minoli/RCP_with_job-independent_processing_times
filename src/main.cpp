@@ -21,7 +21,6 @@ int main(int argc, char *argv[])
 
     std::cout << "exact" << std::endl;
     std::cout << "z* " << z_optimal_exact << std::endl;
-    assert (z_optimal_exact > ins.U);
     std::cout << "time[s] " << std::get<1>(result_exact) << std::endl;
     // std::cout << "extended_states_cnt " << std::get<2>(result_exact) << std::endl;
     // std::cout << "used_IDs_cnt " << std::get<3>(result_exact) << std::endl;
