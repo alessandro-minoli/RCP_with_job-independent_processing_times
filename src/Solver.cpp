@@ -13,10 +13,11 @@ using std::vector;
 
 int J;
 int M;
-vector<int> G_p;
+vector<vector<int>> G_p;
 vector<vector<int>> G_t;
-vector<vector<int>> G_lambda_factors;
-vector<int> G_mu_factors;
+vector<vector<vector<int>>> G_lambda_factors;
+vector<int> G_mu_factors_1;
+vector<vector<vector<int>>> G_mu_factors_2;
 
 tuple<int, double, int, int> Solver::run_exact(Instance &ins, bool verbose)
 {
@@ -25,7 +26,8 @@ tuple<int, double, int, int> Solver::run_exact(Instance &ins, bool verbose)
     G_p = ins.p;
     G_t = ins.t;
     G_lambda_factors = ins.lambda_factors;
-    G_mu_factors = ins.mu_factors;
+    G_mu_factors_1 = ins.mu_factors_1;
+    G_mu_factors_2 = ins.mu_factors_2;
 
     auto start = std::chrono::high_resolution_clock::now();
 
@@ -96,7 +98,7 @@ tuple<int, double, int, int> Solver::run_exact(Instance &ins, bool verbose)
                 if (m + 1 < M + 1)
                 {
                     s_next->x[m + 1] = j;
-                    s_next->C[m + 1] = s_next->t + G_p[m + 1];
+                    s_next->C[m + 1] = s_next->t + G_p[m + 1][j];
                 }
 
                 ++(s_next->n[m]);
@@ -149,7 +151,8 @@ tuple<int, double> Solver::run_heuristic(Instance &ins, int rho, bool verbose)
     G_p = ins.p;
     G_t = ins.t;
     G_lambda_factors = ins.lambda_factors;
-    G_mu_factors = ins.mu_factors;
+    G_mu_factors_1 = ins.mu_factors_1;
+    G_mu_factors_2 = ins.mu_factors_2;
 
     auto start = std::chrono::high_resolution_clock::now();
 
@@ -255,7 +258,7 @@ tuple<int, double> Solver::run_heuristic(Instance &ins, int rho, bool verbose)
             if (m + 1 < M + 1)
             {
                 s_next->x[m + 1] = j;
-                s_next->C[m + 1] = s_next->t + G_p[m + 1];
+                s_next->C[m + 1] = s_next->t + G_p[m + 1][j];
             }
 
             ++(s_next->n[m]);

@@ -70,7 +70,7 @@ public:
             assert(m > 0);
         }
         assert(k >= m);
-        int lambda = e[m] + G_lambda_factors[m][k];
+        int lambda = e[m] + G_lambda_factors[j][m][k];
         return lambda;
     };
 
@@ -79,7 +79,7 @@ public:
         assert(m < M + 1);
         int j = x[m]; // j is the job on machine m
         assert(i >= j);
-        int mu = e[m] + (i - j) * G_mu_factors[m];
+        int mu = e[m] + (i - j) * G_mu_factors_1[m] + G_mu_factors_2[m][j][i];
         return mu;
     };
 

@@ -4,7 +4,7 @@ Alessandro Minoli, Giovanni Righini (2025)
 
 ##### Usage
 
-Compile and run on a specific instance with :
+Compile with :
 
 ```
 mkdir build
@@ -12,13 +12,12 @@ cd build
 cmake ..
 make
 cd ..
-./bin/RCP_with_job-independent_processing_times <path_to_instance_file>
 ```
 
-Test on a dataset of instances with :
+Run on a specific instance with :
 
 ```
-./run_on_dataset.sh
+./bin/RCP_with_fixed_job_sequence <path_to_instance_file>
 ```
 
 ##### Format of instance files
@@ -26,7 +25,10 @@ Test on a dataset of instances with :
 ```
 J                                   # number of jobs
 M                                   # number of machines
-p_1  p_2  ...  p_M                  # processing time on each machine
+p_1,1    p_1,2    ...  p_1,J        # processing time on each machine of each job
+p_2,1    p_2,2    ...  p_2,J
+...
+p_M,1    p_M,2    ...  p_M,J
 t_0,0    t_0,1    ...  t_0,M+1      # travel time between each pair of stations
 t_1,0    t_1,1    ...  t_1,M+1
 ...

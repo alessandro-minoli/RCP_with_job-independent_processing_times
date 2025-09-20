@@ -40,6 +40,10 @@
 # debug information files
 *.dwo
 
+
+.vscode/
 build/
 bin/
 other/
+papers/
+compile.sh
